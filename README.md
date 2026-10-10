@@ -52,11 +52,11 @@ python3.10 -m venv .venv-tifa
 source .venv-tifa/bin/activate
 python -m pip install "pip==24.0" "setuptools==69.5.1" wheel "Cython==0.29.37" "numpy==1.26.4"
 python -m pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu121
-python -m pip install --no-build-isolation -e ".[tifa]"
+MAX_JOBS=1 python -m pip install --no-build-isolation -e ".[tifa]"
 python tests/tifa_installation_check.py
 ```
 
-Use the `https://download.pytorch.org/whl/cpu` index instead for CPU inference. The pinned build tools support fairseq, which ModelScope's VQA imports require. Set `evaluation.tifa_mplug`, `evaluation.tifa_sbert`, and the appropriate `evaluation.tifa_bank` in your configuration; weight links are in [Asset downloads](docs/ASSETS.md). The mPLUG and Sentence-BERT runtime wrappers and fixed question banks are bundled, so no separate `tifascore` package or question-generation API is needed.
+Use the `https://download.pytorch.org/whl/cpu` index instead for CPU inference. The pinned build tools and a C++ compiler (for example, Ubuntu's `build-essential`) support fairseq, which ModelScope's VQA imports require; the dependency uses the complete upstream v0.12.2 source release. Set `evaluation.tifa_mplug`, `evaluation.tifa_sbert`, and the appropriate `evaluation.tifa_bank` in your configuration; weight links are in [Asset downloads](docs/ASSETS.md). The mPLUG and Sentence-BERT runtime wrappers and fixed question banks are bundled, so no separate `tifascore` package or question-generation API is needed.
 
 ## Data and configuration
 
