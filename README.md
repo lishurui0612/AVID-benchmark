@@ -1,68 +1,210 @@
-# AVID benchmark
+# AVID Benchmark
 
-本仓库包含两个主要部分：独立评测函数，以及 LDM、MindEye1、MindEye2、MindBridge 的训练与预测代码。假设已下载发布的数据，并已准备好预训练权重；代码直接读取配置中的本地路径。
+Evaluation tools and reconstruction baselines for **AVID: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding**.
 
-## 使用
+AVID studies visual mental imagery elicited by spoken descriptions. This repository provides independent scoring functions for reconstructed images, semantic alignment, visual attributes, and generated captions, together with AVID adaptations of **LDM, MindEye1, MindEye2, and MindBridge**.
 
-Python 3.10。基础评分安装 `pip install -e .`；图像 encoder 安装 `pip install -e '.[evaluation]'`。四个 baseline 还需要模型依赖，见 `requirements/models.txt`。Qwen3-VL 属性抽取和 TIFA 使用各自兼容的环境；已保存的答案可以在基础环境中直接评分。
+[Data](#data-and-configuration) · [Evaluation](#evaluation) · [Baselines](#baseline-training-and-prediction) · [Sources and citation](#sources-and-citation)
 
-编辑 `config.yaml` 的数据、资产和输出路径。模型相关路径可以通过 `model_overrides` 设置，不需要搬动或重复下载原来的权重。代码强制 HF 离线模式，缺少所需资产时报告具体路径。
+## Overview
 
-模板中 MindEye1/MindBridge 的预测使用历史 img2img 配置（`img2img_strength: 0.85`）。将 `autoencoder_checkpoint_path` 指向对应 AVID 被试、刺激类型和 vertex ROI 的已有低层权重；其输入维度须与原始数据匹配。MindBridge 的低层模型读取原始 vertex，高层模型单独池化。缺少权重时会报错。只使用 high-level pipeline 时，可明确设置 `img2img_strength: 1.0`。
+The benchmark evaluates both consistency with reference images and alignment with the described content. These measure different aspects of imagery reconstruction and should be reported separately.
+
+| Component | What it provides |
+|---|---|
+| Evaluation | One callable function per metric, with per-sample scores, sample IDs, and protocol information |
+| Baselines | Separate training and prediction commands for four reconstruction methods |
+| Configuration | Editable paths to downloaded AVID data and existing pretrained assets |
+
+Training, prediction, and evaluation are separate stages. You can evaluate predictions from your own model without training any bundled baseline. This repository assumes that the released, preprocessed data are already available locally.
+
+## Installation
+
+Use **Python 3.10** for the pinned baseline environment. CUDA GPUs are needed for baseline neural-network training and diffusion generation; scoring precomputed arrays or saved answers can run on CPU.
 
 ```bash
-python train.py --model mindeye1 --subject 1 --stimulus complex --config config.yaml
-python predict.py --model mindeye1 --subject 1 --stimulus complex --checkpoint /path/to/best.pth --config config.yaml
-python evaluate.py --predictions /path/to/manifest.jsonl --metrics pixcorr ssim inception_2way clip_i_2way clip_t_2way --config config.yaml --output scores.json
+git clone https://github.com/lishurui0612/AVID-benchmark.git
+cd AVID-benchmark
+python -m pip install -e .
 ```
 
-三个命令分别训练、预测和评测，不串联执行。训练期间允许计算验证损失以选择检查点，但关闭生成图像和最终 benchmark 评分。每个模型都有独立的 `avid_benchmark/recipes/<model>.json`，安装后也可以直接使用默认配方。`--recipe` 可以指定修改后的配方，`--epochs 1` 仅用于训练 smoke 检查。配置默认读取当前工作目录的 `config.yaml`；预测可用 `--max-samples 8` 做小规模检查，默认 0 使用完整测试集。
+Choose the additional dependencies for your workflow:
 
-MindEye1 高层和低层可以分别训练。高层使用上面的默认命令；低层使用 `python train.py --model mindeye1 --component lowlevel --subject 1 --stimulus complex --config config.yaml`，默认配方为 `mindeye1_lowlevel.json`（120 epochs、batch16）。低层从随机初始化训练完整 vertex 输入，使用原 AVID 的 latent L1 和 ConvNeXt token soft contrastive loss；`assets.mindeye1_vae`、`assets.mindeye1_convnext` 指向已有冻结权重。每个完整 epoch 覆盖全部训练刺激，验证 loss 选择低层 best checkpoint。随后将配置中的 `autoencoder_checkpoint_path` 指向此低层检查点，用独立 `predict.py` 命令加载高层检查点执行 img2img。训练阶段不生成图像或运行 benchmark。
+| Workflow | Installation |
+|---|---|
+| Image and text feature extraction | `python -m pip install -e ".[evaluation]"` |
+| Baseline training and prediction | `python -m pip install -e ".[models]"` |
+| Unit tests | `python -m pip install -e ".[test]"` |
 
-MindEye1/LDM 训练指定的单个被试。MindEye2 配方使用其他被试预训练，再在 `--subject` 指定被试的训练集上微调；预测默认选明确记录的微调检查点。MindBridge 配方联合训练。默认参与者集合为 complex 九人、simple 七人（simple 没有 sub-02/sub-03）；二者默认只输出所指定被试的预测，保持文章对应的训练模式。
+The baseline extra pins PyTorch, Transformers, Diffusers, and related packages; see [pyproject.toml](pyproject.toml). Use a separate environment for Qwen3-VL attribute extraction: it requires a Transformers version that provides `Qwen3VLForConditionalGeneration`, whereas the baseline environment uses an older pinned version. TIFA inference additionally requires the ModelScope/mPLUG backend. A clean, portable TIFA installation remains to be verified; the baseline extra alone does not install that backend. Scoring saved attribute answers or precomputed TIFA question scores does not load either inference backend.
 
-MindEye2 多卡训练用 `torchrun --standalone --nproc_per_node=<GPU数> train.py ...`。`per_subject_batch_size` 是全局每被试 batch，建议 GPU 数能整除它。样本按刺激 ID 在 tar 内分配到 rank；对比损失使用可反向传播的跨卡 embeddings，保留完整全局负样本集合。MixCo 的被试/卡间索引均加入累计偏移，映射到自身的样本保留完整目标概率。这些修复可能导致结果与旧代码不同。
+## Data and configuration
 
-MindEye2 完整生成使用 `config.mindeye2_full.yaml`，填入已有 GIT、转换器、SDXL、unCLIP、VAE 和 OpenCLIP 权重路径，再运行 `python predict.py --model mindeye2 --subject 1 --stimulus complex --config config.mindeye2_full.yaml --checkpoint <已训练检查点> --run-name mindeye2_full`。完整路线生成 caption，对 unCLIP 图像做 SDXL refinement，再以 0.8 refined + 0.2 blurry 重建进行融合。完整输出的 manifest 应全部记录 `route: unclip_sdxl_refine_lowlevel_blend`；同时保存 refined 和 blurry 图像。`config.yaml` 中 `caption_image_refinement: false` 使用高层 unCLIP 结果，低层图像单独保存。
+The AVID manuscript provides [full data](https://www.scidb.cn/en/anonymous/dXltWWJp) and [tutorial data](https://www.scidb.cn/en/anonymous/em1peTZi) through ScienceDB. Follow the data provider's access conditions, download the supplied files, and point the configuration to their local locations. Data and pretrained weights are distributed separately from this repository.
 
-`models/` 保留四种方法各自的实现；`vendor/` 保留实际运行需要的上游源码。公共评分函数在 `evaluation/`，导入它们不加载 Torch、Transformers 或 baseline。
+The reader accepts the released tar shards, either directly under the dataset root or in subject subdirectories:
 
-## 直接调用指标
+```text
+<dataset_root>/
+└── sub-01/
+    ├── sub-01_complex_train.tar
+    ├── sub-01_complex_val.tar
+    ├── sub-01_simple_train.tar
+    └── sub-01_simple_val.tar
+```
+
+Each tar sample contains `<key>.img_name.npy` and `<key>.responses.npy`. Image names must match the supplied stimulus images and the `image` column in `used_stimuli.tsv`. English semantic references use its `translated_caption` column. Keep the released splits and vertex order intact. The held-out prediction split is named `val` in the files and manifests.
+
+Copy the template and replace its placeholder paths:
+
+```bash
+cp config.yaml config.local.yaml
+```
+
+| Configuration section | Set these paths |
+|---|---|
+| `paths` | Tar dataset root, complex/simple stimulus images, `used_stimuli.tsv`, output directory, pretrained asset root |
+| `assets` | Shared CLIP weights and MindEye1's frozen VAE/ConvNeXt teacher weights, as required |
+| `model_overrides` | Pretrained generators and subject-specific reconstruction checkpoints for the chosen baseline |
+| `evaluation` | Local weights for the requested encoders or VQA models, and the relevant question bank |
+
+Only the assets needed by your selected workflow have to be available. Existing data folders and weight files can be used in place; their directory names do not have to change. Model loading uses local assets with Hugging Face offline mode enabled.
+
+For attribute evaluation, use the bundled [qwen_v3 bank](avid_benchmark/vendor/vmi_metrics/simple_attribute_bank_qwen_v3.json). TIFA uses the fixed [complex](avid_benchmark/vendor/vmi_metrics/tifa_bank_complex.json) or [simple](avid_benchmark/vendor/vmi_metrics/tifa_bank_simple.json) bank. Set the corresponding configuration entries to the bank for your stimulus type.
+
+## Evaluation
+
+### Evaluate reconstructed images
+
+Pass the JSONL manifest produced by a baseline, or a compatible manifest from your own model:
+
+```bash
+python evaluate.py \
+  --predictions /path/to/predictions/manifest.jsonl \
+  --config config.local.yaml \
+  --metrics pixcorr ssim inception_2way clip_i_2way clip_t_2way \
+  --output scores.json
+```
+
+Each manifest row identifies one reconstruction:
+
+```json
+{"subject_id": 1, "stimulus_type": "complex", "split": "val", "sample_id": "sub01_example", "image_name": "example.jpg", "generated_image_path": "images/example.png", "gt_image_path": "references/example.jpg", "reference_caption": "A description of the reference scene."}
+```
+
+Image paths may be absolute or relative to the manifest. Semantic evaluation requires a reference caption for every stimulus, supplied in the manifest or looked up in `used_stimuli.tsv`. Caption metrics additionally read `generated_text`; an empty prediction scores zero.
+
+### Supported metrics
+
+| Group | Metrics | CLI names |
+|---|---|---|
+| Reference-image consistency | Pixel correlation, SSIM | `pixcorr`, `ssim` |
+| Image identification | Inception, CLIP-I, AlexNet layers 2/5 | `inception_2way`, `clip_i_2way`, `alexnet_2_2way`, `alexnet_5_2way` |
+| Feature distance | EfficientNet, SwAV correlation distance | `efficientnet_distance`, `swav_distance` |
+| Semantic alignment | CLIP-T, SigLIP, AltCLIP identification; CLIP-T retrieval | `clip_t_2way`, `siglip_2way`, `altclip_2way`, `clip_t_recall_at_1`, `clip_t_recall_at_5` |
+| Question answering | TIFA with a fixed question bank | `tifa` |
+| Visual attributes | Color, position, visual identity: raw accuracy, balanced accuracy, balanced chance | `color_*`, `position_*`, `identity_*` |
+| Captions | BLEU-1/4, ROUGE-L F1, token F1, exact match | `bleu1`, `bleu4`, `rouge_l_f1`, `token_f1`, `exact_match` |
+
+For attributes, `*` denotes `accuracy`, `balanced_accuracy`, or `balanced_chance`. Expand these names explicitly on the command line. Full signatures, preprocessing, tie handling, and score definitions are documented in [METRICS.md](METRICS.md).
+
+### Use individual functions
+
+Scoring functions accept arrays or saved answers independently of feature extraction:
 
 ```python
+import numpy as np
 from avid_benchmark.evaluation import compute_clip_t_2way, compute_token_f1
 
-score = compute_clip_t_2way(image_embeddings, text_embeddings, sample_ids=stimulus_ids)
-print(score.score, score.n, score.values)
-caption_score = compute_token_f1(predicted_captions, reference_captions, sample_ids=stimulus_ids)
+# Replace these toy embeddings with aligned features for your candidate set.
+sample_ids = ["image_1", "image_2", "image_3"]
+image_embeddings = np.eye(3)
+text_embeddings = np.eye(3)
+
+result = compute_clip_t_2way(
+    image_embeddings, text_embeddings, sample_ids=sample_ids
+)
+print(result.score, result.n, result.values)
+
+caption_result = compute_token_f1(
+    ["a red circle"], ["a red circle"], sample_ids=["simple_1"]
+)
 ```
 
-每个指标一个独立函数，返回分数、样本 ID、逐样本值、N 和协议版本。矩阵指标使用某一被试的完整固定候选集；多个被试分别计算，不能拼接重复刺激作为负例。Encoder/VQA 抽取与计分分离，CLI 在一次评估中复用模型和 embeddings。
+Every function returns a `MetricResult` containing the aggregate score, per-sample values, IDs, denominator, and protocol. Importing the scoring functions does not load baseline models or encoders.
 
-| 类别 | 独立指标 |
-|---|---|
-| 图像 | PixCorr、SSIM、Inception 2-way、CLIP-I 2-way、AlexNet(2)/(5) 2-way、EfficientNet/SwAV correlation distance |
-| 图文语义 | CLIP-T、SigLIP、AltCLIP 2-way；CLIP-T R@1、R@5；固定题库 TIFA |
-| 属性 | color、position、visual identity 的 raw accuracy、balanced accuracy、balanced chance |
-| Caption | BLEU-1、BLEU-4、ROUGE-L F1、Token-F1、exact match |
+Precomputed arrays can also be evaluated with `--inputs features.npz`; NPZ keys must match the selected function's arguments. Saved Qwen answers can be rescored without Qwen inference:
 
-数值输入也可通过 `evaluate.py --inputs <arrays.npz> --metrics ... --output ...` 计算。NPZ 中的数组名对应函数参数，例如 `image_embeddings`、`text_embeddings`、`sample_ids`。函数签名和协议说明见 [METRICS.md](METRICS.md)。属性答案使用 `--answers answers.jsonl`，无需重新运行 Qwen。仅对数值或已有答案计分时无需配置文件；抽取图像特征时提供模型路径配置。
+```bash
+python evaluate.py \
+  --answers /path/to/answers.jsonl \
+  --metrics color_accuracy position_accuracy identity_accuracy \
+  --output attribute_scores.json
+```
 
-预测 manifest 每行至少包含 `subject_id`、`stimulus_type`、`split`、`sample_id`、`image_name`、`generated_image_path`、`gt_image_path`。语义指标还需 reference caption，可直接提供 `reference_caption`，或从配置中的 `used_stimuli.tsv` 读取 `translated_caption`；与模型是否生成 caption 无关。图片路径可以相对 manifest。
+**Evaluation protocol.** Compute identification and retrieval on each subject's complete, fixed candidate set. Do not pool repeated stimuli across subjects as distractors. Keep the stimulus split, encoder weights, candidate count, and reconstruction route consistent when comparing results. Caption BLEU follows the AVID implementation's add-one smoothing; it is not interchangeable with unsmoothed BLEU. Attribute scores use the frozen `qwen_v3` annotation bank.
 
-## 复现协议
+## Baseline training and prediction
 
-LDM 和 MindBridge 保留历史方法使用真实参考图像选择多个生成候选的协议（分别为 5/16 candidates）；MindEye1 使用脑预测 embedding 选择。候选数和选择方式应与报告一起保存。不要把不同选择协议的结果混为同一实验。
+The bundled recipes implement the AVID training settings for each method:
 
-Caption BLEU 保留历史实现的 add-one smoothing：短句/零词重叠仍可能有正值，并非标准 unsmoothed BLEU。空预测计零并进入完整分母；参考文本不能为空。属性固定使用 `qwen_v3`，保留多答案颜色标注，balanced chance 与计分类别分组一致。
+| Method | Training setting | CLI model |
+|---|---|---|
+| LDM | Single-subject ridge decoding of diffusion targets | `ldm` |
+| MindEye1 | Single-subject high-level model; independently trained low-level model | `mindeye1` |
+| MindEye2 | Leave-one-subject-out pretraining, followed by target-subject fine-tuning | `mindeye2` |
+| MindBridge | Joint multi-subject training | `mindbridge` |
 
-## 验证与发布状态
+For example, train MindEye1's high-level model, then generate predictions in a separate command:
 
-`python -m pytest tests -q` 检查评分和模型修复；`torchrun --standalone --nproc_per_node=2 tests/ddp_gradient_check.py` 验证实际 MindEye2 forward 的两 rank 梯度等于合并 batch 参考，并验证更新后参数一致。
+```bash
+python train.py \
+  --model mindeye1 --subject 1 --stimulus complex \
+  --config config.local.yaml
 
-该检查同时验证全局 MixCo/soft contrastive loss 的梯度。测试使用小型 backbone/prior；真实 baseline 的训练和预测仍需单独的 GPU 任务验证。
+python predict.py \
+  --model mindeye1 --subject 1 --stimulus complex \
+  --checkpoint /path/to/highlevel/best.pth \
+  --config config.local.yaml
+```
 
-数据和预训练权重需单独准备，仓库不包含实验记录、结果、集群配置或机器上的实际文件地址。第三方来源及许可说明见 [THIRD_PARTY.md](THIRD_PARTY.md)。TIFA 的干净环境可移植安装仍待验证。
+With the default img2img setting, also configure a compatible low-level checkpoint. The prediction command prints the output manifest path; pass that path to `evaluate.py`. Training can compute validation loss to select checkpoints, but does not generate final reconstructions or run the benchmark. Prediction does not run evaluation.
 
-数据目录由 `paths.dataset_root` 指定，可以继续指向已有目录，无需改名或搬动旧数据。配置中的 AVID 路径仅为示例。
+See [Baseline guide](docs/BASELINES.md) for all four training commands, MindEye1 low-level training, MindEye2 distributed training and full generation, required pretrained assets, and candidate-selection protocols. Default hyperparameters are in [recipes](avid_benchmark/recipes); `--recipe` accepts an edited JSON or YAML recipe.
+
+## Repository layout
+
+```text
+avid_benchmark/
+├── data/          # Released-data readers and metadata lookup
+├── evaluation/    # Independent metrics and feature/VQA backends
+├── models/        # AVID baseline adapters and training code
+├── recipes/       # Per-model hyperparameters
+└── vendor/        # Adapted upstream code and fixed question banks
+docs/              # Baseline usage
+tests/             # Metric, model, and distributed-gradient checks
+config*.yaml       # Local-path templates
+train.py           # Training entry point
+predict.py         # Prediction entry point
+evaluate.py        # Evaluation entry point
+```
+
+For development, run `python -m pytest tests -q`. The optional two-GPU gradient check is `torchrun --standalone --nproc_per_node=2 tests/ddp_gradient_check.py`.
+
+## Sources and citation
+
+If you use AVID, cite **AVID: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding**. For software provenance, record this repository's URL and the commit used. Also cite the original methods and evaluation tools used in your experiments; verified BibTeX entries are provided in [REFERENCES.bib](REFERENCES.bib).
+
+| Method or tool | Original work | Upstream implementation |
+|---|---|---|
+| LDM reconstruction | [Takagi and Nishimoto, CVPR 2023](https://openaccess.thecvf.com/content/CVPR2023/html/Takagi_High-Resolution_Image_Reconstruction_With_Latent_Diffusion_Models_From_Human_Brain_CVPR_2023_paper.html) | [StableDiffusionReconstruction](https://github.com/yu-takagi/StableDiffusionReconstruction); the AVID adapter uses [Himalaya](https://github.com/gallantlab/himalaya) and [Diffusers](https://github.com/huggingface/diffusers) |
+| MindEye1 | [Scotti et al., NeurIPS 2023](https://arxiv.org/abs/2305.18274) | [fMRI-reconstruction-NSD](https://github.com/MedARC-AI/fMRI-reconstruction-NSD) |
+| MindEye2 | [Scotti et al., ICML 2024](https://arxiv.org/abs/2403.11207) | [MindEyeV2](https://github.com/MedARC-AI/MindEyeV2) |
+| MindBridge | [Wang et al., CVPR 2024](https://arxiv.org/abs/2404.07850) | [MindBridge](https://github.com/littlepure2333/MindBridge) |
+| TIFA | [Hu et al., 2023](https://arxiv.org/abs/2303.11897) | [TIFA](https://github.com/Yushi-Hu/tifa) |
+
+These baselines are AVID adaptations of the original methods. Upstream repositories document their original datasets and settings; use this repository's configurations for AVID. MindEye's upstream authors also request citation of the [Natural Scenes Dataset](https://doi.org/10.1038/s41593-021-00962-x), on which their original methods were developed.
+
+Third-party source notices and licenses are preserved in their respective directories. Source provenance, local modifications, and weight-license boundaries are described in [THIRD_PARTY.md](THIRD_PARTY.md); no repository-wide license is assigned to copied third-party code. Data, weights, private configurations, experiment records, and generated results are not included in this repository.
+
+For questions or reproducible bug reports, please [open an issue](https://github.com/lishurui0612/AVID-benchmark/issues) with the command, software versions, relevant configuration fields, and traceback. Remove private paths and credentials before posting.

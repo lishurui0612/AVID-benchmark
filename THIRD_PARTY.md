@@ -2,6 +2,10 @@
 
 The `avid_benchmark/vendor` directory retains upstream model code and the authors' AVID adaptations. Preserved upstream LICENSE files apply to their respective directories. MindEye2 README records upstream commit `c184718`; its upstream MIT LICENSE is retained along with the generative-model source notices.
 
+The LDM adapter implements the AVID adaptation of Takagi and Nishimoto's reconstruction method using Himalaya ridge regression and Diffusers. Original-method references and official repositories are linked in [README.md](README.md); bibliographic entries are in [REFERENCES.bib](REFERENCES.bib). Method attribution does not establish an exact source revision for a local adaptation.
+
+The TIFA runtime is adapted from [Yushi-Hu/tifa](https://github.com/Yushi-Hu/tifa), commit `8e37050f44ab4ee681e4251f3c8a9d4cc86e901e`. Its Apache-2.0 license and [adaptation record](avid_benchmark/vendor/tifa_official_8e37050/UPSTREAM.md) are included. The fixed question banks and `qwen_v3` attribute annotations define the AVID scoring inputs; they are distinct from upstream pretrained model weights.
+
 MindEye1's MIT LICENSE was restored from https://github.com/MedARC-AI/fMRI-reconstruction-NSD/blob/main/LICENSE (Git blob ca8c64c7e99a07a6101a61de78b56b4928897869; retrieved 2026-10-09). This identifies the license text, not the unknown originating commit of the locally adapted snapshot.
 
 MindBridge's adapted snapshot has no LICENSE, and the root file listing of https://github.com/littlepure2333/MindBridge also contained no LICENSE when inspected on 2026-10-09. Its upstream revision and redistribution permission remain unresolved. Do not treat public availability as a license grant. No blanket repository license is assigned to copied third-party code. Pretrained-weight licenses are independent of source-code licenses.
