@@ -199,7 +199,7 @@ predict.py         # Prediction entry point
 evaluate.py        # Evaluation entry point
 ```
 
-For development, run `python -m pytest tests -q`. The optional two-GPU gradient check is `torchrun --standalone --nproc_per_node=2 tests/ddp_gradient_check.py`.
+For development, run `python -m pytest tests -q`. The optional two-process CPU gradient check is `torchrun --standalone --nproc_per_node=2 tests/ddp_gradient_check.py`.
 
 ## Citation
 
