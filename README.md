@@ -197,33 +197,15 @@ For development, run `python -m pytest tests -q`. The optional two-process CPU g
 
 ## Citation
 
-If you use the AVID dataset or benchmark in your research, please cite our accompanying manuscript:
-
-**AVID: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding.**
-
-### Paper citation
-
-The fields below are placeholders for the final manuscript metadata. Replace them with the released author list, publication details, and paper URL before citing.
+If you use AVID in your research, please cite our paper:
 
 ```bibtex
-@misc{avid_dataset,
+@inproceedings{avid2026,
   title = {{AVID}: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding},
   author = {AUTHOR_LIST},
-  year = {YEAR},
-  howpublished = {VENUE_OR_PREPRINT},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year = {2026},
   url = {PAPER_URL}
-}
-```
-
-### Repository citation
-
-For the software, include the repository URL and the commit used. The following entry identifies this code repository:
-
-```bibtex
-@misc{avid_benchmark,
-  title = {{AVID Benchmark}: Evaluation Tools and Reconstruction Baselines},
-  howpublished = {\url{https://github.com/lishurui0612/AVID-benchmark}},
-  note = {Source code accompanying the AVID dataset and benchmark}
 }
 ```
 
