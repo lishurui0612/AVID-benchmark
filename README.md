@@ -4,7 +4,7 @@ Evaluation tools and reconstruction baselines for **AVID: A 5T fMRI Dataset for 
 
 This repository provides the benchmark evaluation code and AVID adaptations of **LDM, MindEye1, MindEye2, and MindBridge**.
 
-[Introduction](#introduction) · [Data](#data-and-configuration) · [Evaluation](#evaluation) · [Baselines](#baseline-training-and-prediction) · [Sources](#sources) · [Citation](#citation) · [Acknowledgements](#acknowledgements)
+[Introduction](#introduction) · [Data](#data-and-configuration) · [Asset downloads](docs/ASSETS.md) · [Evaluation](#evaluation) · [Baselines](#baseline-training-and-prediction) · [Sources](#sources) · [Citation](#citation) · [Acknowledgements](#acknowledgements)
 
 ## Introduction
 
@@ -50,7 +50,7 @@ The baseline extra pins PyTorch, Transformers, Diffusers, and related packages; 
 
 ## Data and configuration
 
-The AVID manuscript provides [full data](https://www.scidb.cn/en/anonymous/dXltWWJp) and [tutorial data](https://www.scidb.cn/en/anonymous/em1peTZi) through ScienceDB. Follow the data provider's access conditions, download the supplied files, and point the configuration to their local locations. Data and pretrained weights are distributed separately from this repository.
+The AVID manuscript provides [full data](https://www.scidb.cn/en/anonymous/dXltWWJp) and [tutorial data](https://www.scidb.cn/en/anonymous/em1peTZi) through ScienceDB. Follow the data provider's access conditions, download the supplied files, and point the configuration to their local locations. Data and pretrained weights are distributed separately from this repository. Download links are collected in [Asset downloads](docs/ASSETS.md).
 
 The reader accepts the released tar shards, either directly under the dataset root or in subject subdirectories:
 

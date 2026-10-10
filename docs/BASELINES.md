@@ -1,6 +1,6 @@
 # Baseline guide
 
-The commands below assume that the [baseline dependencies](../README.md#installation), AVID data, and the assets required by the chosen method are ready. Edit `config.local.yaml` before running them. Paths shown here are placeholders.
+The commands below assume that the [baseline dependencies](../README.md#installation), AVID data, and the assets required by the chosen method are ready. Asset links are listed in [Asset downloads](ASSETS.md). Edit `config.local.yaml` before running them. Paths shown here are placeholders.
 
 ## Training settings
 
