@@ -6,4 +6,4 @@ The bundled `sgm` implementations and [unCLIP configuration](configs/unclip6.yam
 
 Use the root [installation instructions](../../../../../README.md#installation) and [MindEye2 guide](../../../../../docs/BASELINES.md#mindeye2). Pretrained weights are external and configured through local asset paths. The code [LICENSE-CODE](LICENSE-CODE), model-license notices in `model_licenses/`, and source copyright notices are retained; source and pretrained-model licenses apply separately.
 
-For the complete upstream workflows, model descriptions, and original documentation, consult the [upstream README](https://github.com/Stability-AI/generative-models#readme). The SDXL paper citation is included in [REFERENCES.bib](../../../../../REFERENCES.bib).
+For the complete upstream workflows, model descriptions, and original documentation, consult the [upstream README](https://github.com/Stability-AI/generative-models#readme).

@@ -4,6 +4,6 @@ This directory contains the AVID adaptation of [MindBridge](https://github.com/l
 
 The retained training and reconstruction entry points and their dependencies are called by the AVID adapter. Use the separate commands in the [AVID baseline guide](../../../docs/BASELINES.md#mindbridge) and the root [pyproject.toml](../../../pyproject.toml) for installation. Upstream NSD launch scripts and their conflicting requirements file are outside this runtime subset.
 
-MindBridge's redistribution license remains unresolved. Public availability does not establish a license grant. The paper's citation is included in [REFERENCES.bib](../../../REFERENCES.bib).
+MindBridge's redistribution license remains unresolved. Public availability does not establish a license grant.
 
 The original project acknowledges MindEye, nsd_access, the Natural Scenes Dataset, Accelerate, DeepSpeed, Xingyi Yang, and Yifan Zhang. Consult the [upstream README](https://github.com/littlepure2333/MindBridge#readme) for its complete acknowledgements, original installation guide, and NSD workflows.

@@ -225,7 +225,7 @@ We also acknowledge [Hugging Face Transformers](https://github.com/huggingface/t
 
 Third-party source notices and licenses are preserved in their respective directories. No repository-wide license is assigned to copied third-party code. Data, weights, private configurations, experiment records, and generated results are not included in this repository.
 
-Please also cite the original baseline methods and evaluation tools used in your experiments. Their BibTeX entries are provided in [REFERENCES.bib](REFERENCES.bib). MindEye's upstream authors additionally request citation of the [Natural Scenes Dataset](https://doi.org/10.1038/s41593-021-00962-x), on which their original methods were developed.
+Please also cite the original baseline methods and evaluation tools used in your experiments. MindEye's upstream authors additionally request citation of the [Natural Scenes Dataset](https://doi.org/10.1038/s41593-021-00962-x), on which their original methods were developed.
 
 ## Acknowledgements
 
