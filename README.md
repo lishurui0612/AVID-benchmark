@@ -40,9 +40,23 @@ Choose the additional dependencies for your workflow:
 |---|---|
 | Image and text feature extraction | `python -m pip install -e ".[evaluation]"` |
 | Baseline training and prediction | `python -m pip install -e ".[models]"` |
+| TIFA image-question inference | Use the dedicated TIFA environment below |
 | Unit tests | `python -m pip install -e ".[test]"` |
 
-The baseline extra pins PyTorch, Transformers, Diffusers, and related packages; see [pyproject.toml](pyproject.toml). Use a separate environment for Qwen3-VL attribute extraction: it requires a Transformers version that provides `Qwen3VLForConditionalGeneration`, whereas the baseline environment uses an older pinned version. TIFA inference additionally requires the ModelScope/mPLUG backend. A clean, portable TIFA installation remains to be verified; the baseline extra alone does not install that backend. Scoring saved attribute answers or precomputed TIFA question scores does not load either inference backend.
+The baseline extra pins PyTorch, Transformers, Diffusers, and related packages; see [pyproject.toml](pyproject.toml). Use a separate environment for Qwen3-VL attribute extraction: it requires a Transformers version that provides `Qwen3VLForConditionalGeneration`, whereas the baseline environment uses an older pinned version. Scoring saved attribute answers or precomputed TIFA question scores does not load either inference backend.
+
+For TIFA inference, use a separate **Linux / Python 3.10** environment:
+
+```bash
+python3.10 -m venv .venv-tifa
+source .venv-tifa/bin/activate
+python -m pip install "pip==24.0" "setuptools==69.5.1" wheel "Cython==0.29.37" "numpy==1.26.4"
+python -m pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu121
+python -m pip install --no-build-isolation -e ".[tifa]"
+python tests/tifa_installation_check.py
+```
+
+Use the `https://download.pytorch.org/whl/cpu` index instead for CPU inference. The pinned build tools support fairseq, which ModelScope's VQA imports require. Set `evaluation.tifa_mplug`, `evaluation.tifa_sbert`, and the appropriate `evaluation.tifa_bank` in your configuration; weight links are in [Asset downloads](docs/ASSETS.md). The mPLUG and Sentence-BERT runtime wrappers and fixed question banks are bundled, so no separate `tifascore` package or question-generation API is needed.
 
 ## Data and configuration
 
