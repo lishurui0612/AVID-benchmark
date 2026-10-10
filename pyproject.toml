@@ -7,6 +7,7 @@ name = "avid-benchmark"
 version = "0.1.0"
 description = "Independent AVID benchmark metrics and four reproducible fMRI baselines"
 requires-python = ">=3.10"
+license = {file = "LICENSE"}
 dependencies = ["numpy>=1.24,<2", "Pillow>=9", "PyYAML>=6", "scipy>=1.10", "scikit-image>=0.20"]
 
 [project.optional-dependencies]
