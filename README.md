@@ -8,13 +8,7 @@ This repository provides the benchmark evaluation code and AVID adaptations of *
 
 ## Introduction
 
-Visual mental imagery allows people to construct visual scenes without seeing them. Decoding these internally generated representations from brain activity requires data and evaluation protocols tailored to imagery. Many existing paradigms ask participants to view or memorize images before imagining them, making it difficult to distinguish imagery-related signals from visual perception or memory of a recently presented image.
-
-**AVID (Auditory-induced Visual Imagery Dataset)** is a 5T fMRI resource for studying imagery elicited by spoken descriptions. It contains approximately **67 hours of recordings from nine participants** and two complementary stimulus sets: **complex** scenes described in naturalistic Mandarin and **simple** stimuli with controlled visual attributes. Participants construct the described images mentally, providing a setting for studying reconstruction from verbally specified content.
-
-The AVID benchmark distinguishes **reference-image consistency** from **semantic alignment** with the descriptions, and evaluates controlled visual attributes and generated captions. A reference image is a stimulus-associated comparison target; it is not a direct observation of what a participant imagined. Reporting these aspects separately makes the scope of reconstruction scores explicit.
-
-This repository has two main purposes: provide independently callable benchmark metrics, and support baseline training and reconstruction through separate commands. Users can evaluate their own models with the same scoring functions and adapt the supplied baseline recipes to the downloaded AVID data.
+This is the official repository for **AVID: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding**, accepted at **NeurIPS 2026**. It provides baseline model training and modular benchmark evaluation code for AVID.
 
 ## Overview
 
