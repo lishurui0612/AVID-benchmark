@@ -2,9 +2,19 @@
 
 Evaluation tools and reconstruction baselines for **AVID: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding**.
 
-AVID studies visual mental imagery elicited by spoken descriptions. This repository provides independent scoring functions for reconstructed images, semantic alignment, visual attributes, and generated captions, together with AVID adaptations of **LDM, MindEye1, MindEye2, and MindBridge**.
+This repository provides the benchmark evaluation code and AVID adaptations of **LDM, MindEye1, MindEye2, and MindBridge**.
 
-[Data](#data-and-configuration) · [Evaluation](#evaluation) · [Baselines](#baseline-training-and-prediction) · [Sources and citation](#sources-and-citation)
+[Introduction](#introduction) · [Data](#data-and-configuration) · [Evaluation](#evaluation) · [Baselines](#baseline-training-and-prediction) · [Citation](#citation) · [Acknowledgements](#acknowledgements)
+
+## Introduction
+
+Visual mental imagery allows people to construct visual scenes without seeing them. Decoding these internally generated representations from brain activity requires data and evaluation protocols tailored to imagery. Many existing paradigms ask participants to view or memorize images before imagining them, making it difficult to distinguish imagery-related signals from visual perception or memory of a recently presented image.
+
+**AVID (Auditory-induced Visual Imagery Dataset)** is a 5T fMRI resource for studying imagery elicited by spoken descriptions. It contains approximately **67 hours of recordings from nine participants** and two complementary stimulus sets: **complex** scenes described in naturalistic Mandarin and **simple** stimuli with controlled visual attributes. Participants construct the described images mentally, providing a setting for studying reconstruction from verbally specified content.
+
+The AVID benchmark distinguishes **reference-image consistency** from **semantic alignment** with the descriptions, and evaluates controlled visual attributes and generated captions. A reference image is a stimulus-associated comparison target; it is not a direct observation of what a participant imagined. Reporting these aspects separately makes the scope of reconstruction scores explicit.
+
+This repository has two main purposes: provide independently callable benchmark metrics, and support baseline training and reconstruction through separate commands. Users can evaluate their own models with the same scoring functions and adapt the supplied baseline recipes to the downloaded AVID data.
 
 ## Overview
 
@@ -191,9 +201,47 @@ evaluate.py        # Evaluation entry point
 
 For development, run `python -m pytest tests -q`. The optional two-GPU gradient check is `torchrun --standalone --nproc_per_node=2 tests/ddp_gradient_check.py`.
 
-## Sources and citation
+## Citation
 
-If you use AVID, cite **AVID: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding**. For software provenance, record this repository's URL and the commit used. Also cite the original methods and evaluation tools used in your experiments; verified BibTeX entries are provided in [REFERENCES.bib](REFERENCES.bib).
+If you use the AVID dataset or benchmark in your research, please cite our accompanying manuscript:
+
+**AVID: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding.**
+
+### Paper citation
+
+The fields below are placeholders for the final manuscript metadata. Replace them with the released author list, publication details, and paper URL before citing.
+
+```bibtex
+@misc{avid_dataset,
+  title = {{AVID}: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding},
+  author = {AUTHOR_LIST},
+  year = {YEAR},
+  howpublished = {VENUE_OR_PREPRINT},
+  url = {PAPER_URL}
+}
+```
+
+### Repository citation
+
+For the software, include the repository URL and the commit used. The following entry identifies this code repository:
+
+```bibtex
+@misc{avid_benchmark,
+  title = {{AVID Benchmark}: Evaluation Tools and Reconstruction Baselines},
+  howpublished = {\url{https://github.com/lishurui0612/AVID-benchmark}},
+  note = {Source code accompanying the AVID dataset and benchmark}
+}
+```
+
+Please also cite the original baseline methods and evaluation tools used in your experiments. Their BibTeX entries are provided in [REFERENCES.bib](REFERENCES.bib). MindEye's upstream authors additionally request citation of the [Natural Scenes Dataset](https://doi.org/10.1038/s41593-021-00962-x), on which their original methods were developed.
+
+## Acknowledgements
+
+**Funding:** [Funding agencies and grant numbers to be added.]
+
+**Computing and institutional support:** [Computing platforms and institutional support to be added.]
+
+We thank the authors and contributors of the following projects for making their methods and implementations available. The AVID baselines adapt the original reconstruction methods to the released imagery data; their original datasets and settings are documented in the upstream repositories.
 
 | Method or tool | Original work | Upstream implementation |
 |---|---|---|
@@ -203,7 +251,7 @@ If you use AVID, cite **AVID: A 5T fMRI Dataset for Benchmarking Auditory-induce
 | MindBridge | [Wang et al., CVPR 2024](https://arxiv.org/abs/2404.07850) | [MindBridge](https://github.com/littlepure2333/MindBridge) |
 | TIFA | [Hu et al., 2023](https://arxiv.org/abs/2303.11897) | [TIFA](https://github.com/Yushi-Hu/tifa) |
 
-These baselines are AVID adaptations of the original methods. Upstream repositories document their original datasets and settings; use this repository's configurations for AVID. MindEye's upstream authors also request citation of the [Natural Scenes Dataset](https://doi.org/10.1038/s41593-021-00962-x), on which their original methods were developed.
+We also acknowledge [Hugging Face Transformers](https://github.com/huggingface/transformers) and [Diffusers](https://github.com/huggingface/diffusers), [Himalaya](https://github.com/gallantlab/himalaya), [OpenCLIP](https://github.com/mlfoundations/open_clip), [ConvNeXt](https://github.com/facebookresearch/ConvNeXt), and [ModelScope](https://github.com/modelscope/modelscope) for the model, regression, feature-extraction, and VQA components used in this repository.
 
 Third-party source notices and licenses are preserved in their respective directories. Source provenance, local modifications, and weight-license boundaries are described in [THIRD_PARTY.md](THIRD_PARTY.md); no repository-wide license is assigned to copied third-party code. Data, weights, private configurations, experiment records, and generated results are not included in this repository.
 
