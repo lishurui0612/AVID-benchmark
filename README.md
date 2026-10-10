@@ -1,5 +1,7 @@
 # AVID Benchmark
 
+[![Metrics tests](https://github.com/lishurui0612/AVID-benchmark/actions/workflows/metrics-tests.yml/badge.svg?branch=main)](https://github.com/lishurui0612/AVID-benchmark/actions/workflows/metrics-tests.yml)
+
 Evaluation tools and reconstruction baselines for **AVID: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding**.
 
 This repository provides the benchmark evaluation code and AVID adaptations of **LDM, MindEye1, MindEye2, and MindBridge**.
