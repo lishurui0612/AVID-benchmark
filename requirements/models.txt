@@ -1,0 +1,2 @@
+# Verified baseline stack; Qwen3-VL extraction uses a separate environment.
+-e .[models]

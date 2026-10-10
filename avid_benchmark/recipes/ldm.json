@@ -1,0 +1,60 @@
+{
+  "model_name": "ldm_himalaya",
+  "train": {
+    "run_name": "ldm_sub01_complex",
+    "subjects": [
+      1
+    ],
+    "stimulus_types": [
+      "main"
+    ],
+    "seed": 42,
+    "prediction_split": "val",
+    "run_validation_prediction_after_train": false,
+    "prediction_subjects": [
+      1
+    ],
+    "num_workers": 1
+  },
+  "model": {
+    "stable_diffusion_variant": "sdv14",
+    "image_size": 512,
+    "num_inference_steps": 50,
+    "guidance_scale": 7.5,
+    "strength": 0.8,
+    "negative_prompt": "",
+    "alphas": [
+      1e-10,
+      5e-10,
+      1e-09,
+      5e-09,
+      1e-08,
+      5e-08,
+      1e-07,
+      5e-07,
+      1e-06,
+      5e-06,
+      1e-05,
+      5e-05,
+      0.0001,
+      0.0005,
+      0.001,
+      0.005,
+      0.01,
+      0.05,
+      0.1,
+      0.5,
+      1.0,
+      5.0,
+      10.0,
+      20.0,
+      50.0,
+      100.0,
+      200.0,
+      500.0,
+      1000.0
+    ],
+    "cv": 5,
+    "fit_intercept": false
+  }
+}

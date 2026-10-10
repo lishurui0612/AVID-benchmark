@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "avid-benchmark"
+version = "0.1.0"
+description = "Independent AVID benchmark metrics and four reproducible fMRI baselines"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24,<2", "Pillow>=9", "PyYAML>=6", "scipy>=1.10", "scikit-image>=0.20"]
+
+[project.optional-dependencies]
+evaluation = ["torch>=2.1", "torchvision>=0.16", "transformers>=4.37.2", "sentencepiece"]
+models = ["torch==2.1.0", "torchvision==0.16.0", "transformers==4.37.2", "huggingface_hub==0.25.0", "diffusers==0.23.0", "accelerate==0.24.1", "webdataset==0.2.73", "open_clip_torch==2.24.0", "clip-anytorch", "himalaya==0.4.11", "scikit-learn", "omegaconf", "einops", "tqdm", "kornia==0.7.1", "dalle2-pytorch==1.15.6", "pytorch-lightning==2.0.1", "torchmetrics==1.3.0.post0", "safetensors>=0.4", "fsspec", "h5py", "matplotlib", "pandas", "umap-learn", "wandb"]
+test = ["pytest>=7"]
+
+[project.scripts]
+avid-train = "avid_benchmark.cli:train_main"
+avid-predict = "avid_benchmark.cli:predict_main"
+avid-evaluate = "avid_benchmark.cli:evaluate_main"
+
+[tool.setuptools.packages.find]
+include = ["avid_benchmark*"]
+
+[tool.setuptools.package-data]
+avid_benchmark = ["recipes/*.json", "vendor/**/*.yaml", "vendor/**/*.json", "vendor/**/*.txt", "vendor/**/LICENSE*"]

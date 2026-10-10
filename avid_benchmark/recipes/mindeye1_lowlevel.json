@@ -1,0 +1,18 @@
+{
+  "model_name": "mindeye1",
+  "train": {"subjects": [1], "seed": 0, "num_workers": 1, "prediction_split": "val"},
+  "model": {},
+  "lowlevel": {
+    "batch_size": 16,
+    "num_epochs": 120,
+    "hidden_dim": 4096,
+    "n_blocks": 4,
+    "ups_mode": "4x",
+    "initial_lr": 0.001,
+    "max_lr": 0.0005,
+    "contrastive_weight": 0.1,
+    "contrastive_temperature": 0.075,
+    "steps_per_epoch": 0,
+    "input_dim": null
+  }
+}

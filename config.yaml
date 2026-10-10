@@ -1,0 +1,50 @@
+# Edit this file once after downloading the supplied AVID data.
+paths:
+  dataset_root: /path/to/AVID/AVID_surfaceNoSpeech
+  coco_image_root: /path/to/AVID/coco_images
+  simple_image_root: /path/to/AVID/simple_stimuli_corresponding_image
+  used_stimuli_tsv: /path/to/AVID/used_stimuli.tsv
+  train_output_root: ./outputs
+  asset_root: /path/to/existing/pretrained_weights
+
+assets:
+  clip_hf: /path/to/existing/openai_clip_vit_large_patch14
+  clip_openai: /path/to/existing/ViT-L-14.pt
+  mindeye1_vae: /path/to/existing/sd_image_var_autoenc.pth
+  mindeye1_convnext: /path/to/existing/convnext_xlarge_alpha0.75_fullckpt.pth
+
+# Point directly to existing weights. Offline mode is enforced.
+model_overrides:
+  mindeye1:
+    model:
+      vd_cache_dir: /path/to/existing/versatile-diffusion
+      autoencoder_checkpoint_path: /path/to/existing/sub-01_complex_vertex_non_spe/best.pth
+      img2img_strength: 0.85
+  mindbridge:
+    model:
+      vd_cache_dir: /path/to/existing/versatile-diffusion
+      autoencoder_checkpoint_path: /path/to/existing/sub-01_complex_vertex_non_spe/best.pth
+      img2img_strength: 0.85
+  mindeye2:
+    model:
+      unclip_config_path: avid_benchmark/vendor/mindeye2/src/generative_models/configs/unclip6.yaml
+      caption_image_refinement: false
+  ldm:
+    model:
+      stable_diffusion_model_path: /path/to/existing/stable-diffusion-v1-4
+
+evaluation:
+  device: cuda
+  batch_size: 8
+  clip: /path/to/existing/clip-vit-base-patch32
+  siglip: /path/to/existing/siglip
+  altclip: /path/to/existing/altclip
+  inception: /path/to/existing/inception_v3_google-0cc3c7bd.pth
+  alexnet: /path/to/existing/alexnet-owt-7be5be79.pth
+  efficientnet: /path/to/existing/efficientnet_b1-c27df63c.pth
+  swav: /path/to/existing/swav_800ep_pretrain.pth.tar
+  qwen: /path/to/existing/Qwen3-VL-8B-Instruct
+  attribute_bank: /path/to/AVID/annotations/qwen_v3.json
+  tifa_mplug: /path/to/existing/mplug
+  tifa_sbert: /path/to/existing/sbert
+  tifa_bank: /path/to/AVID/annotations/tifa_bank_complex.json

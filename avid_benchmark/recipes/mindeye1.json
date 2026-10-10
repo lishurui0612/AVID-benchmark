@@ -1,0 +1,38 @@
+{
+  "model_name": "mindeye1",
+  "train": {
+    "run_name": "mindeye1_sub01_complex",
+    "subjects": [
+      1
+    ],
+    "seed": 42,
+    "prediction_split": "val",
+    "run_validation_prediction_after_train": false,
+    "prediction_subjects": [
+      1
+    ],
+    "num_workers": 1
+  },
+  "model": {
+    "batch_size": 64,
+    "num_epochs": 240,
+    "hidden": true,
+    "clip_variant": "ViT-L/14",
+    "mixup_pct": 0.33,
+    "norm_embs": true,
+    "use_image_aug": true,
+    "prior": true,
+    "v2c": true,
+    "plot_umap": false,
+    "lr_scheduler_type": "cycle",
+    "ckpt_interval": 5,
+    "max_lr": 0.0003,
+    "n_samples_save": 0,
+    "use_projector": true,
+    "img2img_strength": 0.85,
+    "recons_per_sample": 5,
+    "num_inference_steps": 20,
+    "guidance_scale": 3.5,
+    "text_image_ratio": 0.0
+  }
+}

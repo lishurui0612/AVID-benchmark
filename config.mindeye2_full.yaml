@@ -1,0 +1,39 @@
+# Existing local data and weights; no model downloads are performed.
+paths:
+  dataset_root: /path/to/AVID/AVID_surfaceNoSpeech
+  coco_image_root: /path/to/AVID/coco_images
+  simple_image_root: /path/to/AVID/simple_stimuli_corresponding_image
+  used_stimuli_tsv: /path/to/AVID/used_stimuli.tsv
+  train_output_root: ./outputs
+  asset_root: /path/to/existing/pretrained_weights
+
+model_overrides:
+  mindeye2:
+    model:
+      blurry_recon: true
+      caption_image_refinement: true
+      prediction_batch_size: 1
+      enhanced_img2img_strength: 0.85
+      caption_sdxl_blend_weight: 0.8
+      openclip_pretrained_path: /path/to/existing/openclip_bigg/open_clip_pytorch_model.bin
+      vae_ckpt_path: /path/to/existing/SDXL_VAE
+      unclip_ckpt_path: /path/to/existing/unclip6_epoch0_step110000.ckpt
+      unclip_config_path: avid_benchmark/vendor/mindeye2/src/generative_models/configs/unclip6.yaml
+      git_model_path: /path/to/existing/microsoft_git_large_coco
+      git_converter_ckpt_path: /path/to/existing/bigG_to_L_epoch8.pth
+      openai_clip_text_model_path: /path/to/existing/openai_clip_vit_large_patch14/sdxl_text_encoder
+      sdxl_base_ckpt_path: /path/to/existing/sd_xl_base_1.0.safetensors
+
+evaluation:
+  device: cuda
+  batch_size: 8
+  clip: /path/to/existing/clip-vit-base-patch32
+  siglip: /path/to/existing/siglip
+  altclip: /path/to/existing/altclip
+  inception: /path/to/existing/inception_v3_google-0cc3c7bd.pth
+  alexnet: /path/to/existing/alexnet-owt-7be5be79.pth
+  efficientnet: /path/to/existing/efficientnet_b1-c27df63c.pth
+  swav: /path/to/existing/swav_800ep_pretrain.pth.tar
+  tifa_mplug: /path/to/existing/mplug
+  tifa_sbert: /path/to/existing/sbert
+  tifa_bank: /path/to/AVID/annotations/tifa_bank_complex.json

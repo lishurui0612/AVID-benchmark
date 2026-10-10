@@ -1,0 +1,31 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+outputs/
+*.egg-info/
+build/
+dist/
+
+# Local environments, credentials, checkpoints and scientific outputs
+.venv/
+.env
+.env.*
+config.local.*
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.tar
+*.tar.gz
+*.npz
+*.npy
+*.log
+
+# Historical internal experiment inventories; not runtime dependencies
+avid_benchmark/vendor/vmi_metrics/*.csv
+avid_benchmark/vendor/vmi_metrics/*_comparison.md
+avid_benchmark/vendor/vmi_metrics/simple_attribute_bank_v1.json
+avid_benchmark/vendor/vmi_metrics/simple_attribute_bank_qwen_v1.json
+avid_benchmark/vendor/vmi_metrics/simple_attribute_bank_qwen_v2.json
+avid_benchmark/vendor/vmi_metrics/simple_attribute_bank_qwen_v4.json
+avid_benchmark/vendor/vmi_metrics/build_tifa_question_bank.py

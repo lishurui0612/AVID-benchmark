@@ -1,0 +1,65 @@
+{
+  "model_name": "mindeye2",
+  "train": {
+    "run_name": "mindeye2_sub01_complex",
+    "mode": "multi_subject_leave_one_out",
+    "subjects_by_stimulus": {"complex": [1,2,3,4,5,6,7,8,10], "simple": [1,4,5,6,7,8,10]},
+    "subjects": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      10
+    ],
+    "stimulus_types": [
+      "complex"
+    ],
+    "held_out_subject": 1,
+    "loo_finetune_sources": ["pretrain_best"],
+    "seed": 42,
+    "eval_every_n_epochs": 5,
+    "preview_every_n_epochs": 20,
+    "generate_val_preview_every_epoch": false,
+    "training_preview_full_generation": false,
+    "preview_split": "val",
+    "preview_max_samples": 2,
+    "prediction_split": "val",
+    "prediction_subjects": [
+      1
+    ],
+    "max_prediction_samples": 0,
+    "prediction_train_samples": 0,
+    "prediction_panel_size": 256,
+    "run_validation_prediction_after_train": false,
+    "skip_completed_training": false,
+    "log_every_n_steps": 25,
+    "num_workers": 1
+  },
+  "model": {
+    "hidden_dim": 4096,
+    "n_blocks": 4,
+    "clip_seq_dim": 256,
+    "clip_emb_dim": 1664,
+    "use_prior": true,
+    "blurry_recon": true,
+    "batch_size": 64,
+    "per_subject_batch_size": 64,
+    "prediction_batch_size": 4,
+    "num_epochs": 150,
+    "loo_finetune_epochs": 15,
+    "loo_finetune_lr": 0.0003,
+    "loo_finetune_lr_scheduler_type": "none",
+    "loo_finetune_mixup_pct": 0.0,
+    "max_lr": 0.001,
+    "lr_scheduler_type": "cycle",
+    "mixup_pct": 0.33,
+    "train_response_reduce": "random",
+    "eval_response_reduce": "mean",
+    "unclip_config_path": "avid_benchmark/vendor/mindeye2/src/generative_models/configs/unclip6.yaml",
+    "enhanced_img2img_strength": 0.85
+  }
+}
