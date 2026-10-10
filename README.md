@@ -4,7 +4,7 @@ Evaluation tools and reconstruction baselines for **AVID: A 5T fMRI Dataset for 
 
 This repository provides the benchmark evaluation code and AVID adaptations of **LDM, MindEye1, MindEye2, and MindBridge**.
 
-[Introduction](#introduction) · [Data](#data-and-configuration) · [Evaluation](#evaluation) · [Baselines](#baseline-training-and-prediction) · [Citation](#citation) · [Acknowledgements](#acknowledgements)
+[Introduction](#introduction) · [Data](#data-and-configuration) · [Evaluation](#evaluation) · [Baselines](#baseline-training-and-prediction) · [Sources](#sources) · [Citation](#citation) · [Acknowledgements](#acknowledgements)
 
 ## Introduction
 
@@ -233,13 +233,7 @@ For the software, include the repository URL and the commit used. The following 
 }
 ```
 
-Please also cite the original baseline methods and evaluation tools used in your experiments. Their BibTeX entries are provided in [REFERENCES.bib](REFERENCES.bib). MindEye's upstream authors additionally request citation of the [Natural Scenes Dataset](https://doi.org/10.1038/s41593-021-00962-x), on which their original methods were developed.
-
-## Acknowledgements
-
-**Funding:** [Funding agencies and grant numbers to be added.]
-
-**Computing and institutional support:** [Computing platforms and institutional support to be added.]
+## Sources
 
 We thank the authors and contributors of the following projects for making their methods and implementations available. The AVID baselines adapt the original reconstruction methods to the released imagery data; their original datasets and settings are documented in the upstream repositories.
 
@@ -254,5 +248,13 @@ We thank the authors and contributors of the following projects for making their
 We also acknowledge [Hugging Face Transformers](https://github.com/huggingface/transformers) and [Diffusers](https://github.com/huggingface/diffusers), [Himalaya](https://github.com/gallantlab/himalaya), [OpenCLIP](https://github.com/mlfoundations/open_clip), [ConvNeXt](https://github.com/facebookresearch/ConvNeXt), and [ModelScope](https://github.com/modelscope/modelscope) for the model, regression, feature-extraction, and VQA components used in this repository.
 
 Third-party source notices and licenses are preserved in their respective directories. Source provenance, local modifications, and weight-license boundaries are described in [THIRD_PARTY.md](THIRD_PARTY.md); no repository-wide license is assigned to copied third-party code. Data, weights, private configurations, experiment records, and generated results are not included in this repository.
+
+Please also cite the original baseline methods and evaluation tools used in your experiments. Their BibTeX entries are provided in [REFERENCES.bib](REFERENCES.bib). MindEye's upstream authors additionally request citation of the [Natural Scenes Dataset](https://doi.org/10.1038/s41593-021-00962-x), on which their original methods were developed.
+
+## Acknowledgements
+
+**Funding:** [Funding agencies and grant numbers to be added.]
+
+**Computing and institutional support:** [Computing platforms and institutional support to be added.]
 
 For questions or reproducible bug reports, please [open an issue](https://github.com/lishurui0612/AVID-benchmark/issues) with the command, software versions, relevant configuration fields, and traceback. Remove private paths and credentials before posting.
