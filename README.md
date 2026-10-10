@@ -223,7 +223,7 @@ We thank the authors and contributors of the following projects for making their
 
 We also acknowledge [Hugging Face Transformers](https://github.com/huggingface/transformers) and [Diffusers](https://github.com/huggingface/diffusers), [Himalaya](https://github.com/gallantlab/himalaya), [OpenCLIP](https://github.com/mlfoundations/open_clip), [ConvNeXt](https://github.com/facebookresearch/ConvNeXt), and [ModelScope](https://github.com/modelscope/modelscope) for the model, regression, feature-extraction, and VQA components used in this repository.
 
-Third-party source notices and licenses are preserved in their respective directories. Source provenance, local modifications, and weight-license boundaries are described in [THIRD_PARTY.md](THIRD_PARTY.md); no repository-wide license is assigned to copied third-party code. Data, weights, private configurations, experiment records, and generated results are not included in this repository.
+Third-party source notices and licenses are preserved in their respective directories. No repository-wide license is assigned to copied third-party code. Data, weights, private configurations, experiment records, and generated results are not included in this repository.
 
 Please also cite the original baseline methods and evaluation tools used in your experiments. Their BibTeX entries are provided in [REFERENCES.bib](REFERENCES.bib). MindEye's upstream authors additionally request citation of the [Natural Scenes Dataset](https://doi.org/10.1038/s41593-021-00962-x), on which their original methods were developed.
 

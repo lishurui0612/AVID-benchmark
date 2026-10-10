@@ -73,7 +73,7 @@ python predict.py \
 
 The full route generates captions, refines unCLIP images with SDXL, and blends `0.8 * refined + 0.2 * blurry` images. Its manifest records `unclip_sdxl_refine_lowlevel_blend` and retains the component image paths. Set `caption_image_refinement: false` to use the high-level unCLIP route with blurry images saved separately.
 
-MixCo subject/rank offsets and self-permutation probabilities are corrected in this implementation. Distributed contrastive candidates retain gradients across ranks. These adaptations are described in [THIRD_PARTY.md](../THIRD_PARTY.md).
+MixCo subject/rank offsets and self-permutation probabilities are corrected in this implementation. Distributed contrastive candidates retain gradients across ranks.
 
 ## MindBridge
 
