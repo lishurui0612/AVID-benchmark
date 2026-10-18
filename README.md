@@ -6,7 +6,7 @@ Evaluation tools and reconstruction baselines for **AVID: A 5T fMRI Dataset for 
 
 This repository provides the benchmark evaluation code and AVID adaptations of **LDM, MindEye1, MindEye2, and MindBridge**.
 
-[Introduction](#introduction) · [Data](#data-and-configuration) · [Asset downloads](docs/ASSETS.md) · [Evaluation](#evaluation) · [Baselines](#baseline-training-and-prediction) · [Citation](#citation) · [Acknowledgements](#acknowledgements) · [License](#license)
+[Introduction](#introduction) · [Data](#data-and-configuration) · [Asset downloads](docs/ASSETS.md) · [Evaluation](#evaluation) · [Baselines](#baseline-training-and-prediction) · [Citation](#citation) · [Acknowledgements](#acknowledgements) · [License](#license) · [Contact](#contact)
 
 ## Introduction
 
@@ -257,6 +257,6 @@ We also acknowledge [Hugging Face Transformers](https://github.com/huggingface/t
 
 Original AVID code is released under the [MIT License](LICENSE); third-party code, pretrained weights, and datasets retain their respective licenses.
 
-## Contact information
+## Contact
 
 For questions, please contact [lishr2022@shanghaitech.edu.cn](mailto:lishr2022@shanghaitech.edu.cn).
