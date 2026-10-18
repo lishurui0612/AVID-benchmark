@@ -216,7 +216,7 @@ For development, run `python -m pytest tests -q`. The optional two-process CPU g
 
 ## Citation
 
-If you use AVID in your research, please cite our paper:
+If you use AVID in your research, please cite both our paper and the dataset:
 
 ```bibtex
 @inproceedings{avid2026,
@@ -225,6 +225,17 @@ If you use AVID in your research, please cite our paper:
   booktitle = {Advances in Neural Information Processing Systems},
   year = {2026},
   url = {PAPER_URL}
+}
+
+@misc{avid_dataset2026,
+  author = {Shiqi Shen and Shurui Li and Xilin Zhang and Yuanning Li},
+  title = {{AVID: Auditory-induced Visual Mental Imagery Dataset}},
+  year = {2026},
+  month = oct,
+  publisher = {Science Data Bank},
+  version = {V1},
+  doi = {10.57760/sciencedb.33666},
+  url = {https://doi.org/10.57760/sciencedb.33666}
 }
 ```
 
