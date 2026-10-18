@@ -43,5 +43,4 @@
 
 | Asset | Download |
 |---|---|
-| Full data | https://www.scidb.cn/en/anonymous/dXltWWJp |
-| Tutorial data | https://www.scidb.cn/en/anonymous/em1peTZi |
+| Full AVID dataset (open access) | https://doi.org/10.57760/sciencedb.33666 |

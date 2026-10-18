@@ -63,7 +63,7 @@ Use the `https://download.pytorch.org/whl/cpu` index instead for CPU inference. 
 
 ## Data and configuration
 
-The AVID manuscript provides [full data](https://www.scidb.cn/en/anonymous/dXltWWJp) and [tutorial data](https://www.scidb.cn/en/anonymous/em1peTZi) through ScienceDB. Follow the data provider's access conditions, download the supplied files, and point the configuration to their local locations. Data and pretrained weights are distributed separately from this repository. Download links are collected in [Asset downloads](docs/ASSETS.md).
+The complete AVID dataset is openly available on ScienceDB: [10.57760/sciencedb.33666](https://doi.org/10.57760/sciencedb.33666). Download the dataset and point the configuration to its local location. Data and pretrained weights are distributed separately from this repository. Download links are collected in [Asset downloads](docs/ASSETS.md).
 
 The reader accepts the released tar shards, either directly under the dataset root or in subject subdirectories:
 
