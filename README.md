@@ -256,3 +256,7 @@ We also acknowledge [Hugging Face Transformers](https://github.com/huggingface/t
 ## License
 
 Original AVID code is released under the [MIT License](LICENSE); third-party code, pretrained weights, and datasets retain their respective licenses.
+
+## Contact information
+
+For questions, please contact [lishr2022@shanghaitech.edu.cn](mailto:lishr2022@shanghaitech.edu.cn).
