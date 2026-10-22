@@ -36,4 +36,5 @@ evaluation:
   swav: /path/to/existing/swav_800ep_pretrain.pth.tar
   tifa_mplug: /path/to/existing/mplug
   tifa_sbert: /path/to/existing/sbert
-  tifa_bank: /path/to/AVID/annotations/tifa_bank_complex.json
+  # Relative to this config. For simple stimuli, use tifa_bank_simple.json.
+  tifa_bank: avid_benchmark/vendor/vmi_metrics/tifa_bank_complex.json

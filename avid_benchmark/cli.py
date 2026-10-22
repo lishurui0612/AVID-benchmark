@@ -183,8 +183,13 @@ def evaluate_main():
     p.add_argument('--output',required=True)
     args=p.parse_args()
     from .evaluation.runner import evaluate
-    config_path=Path(args.config or 'config.yaml')
+    config_path=Path(args.config or 'config.yaml').expanduser().resolve()
     config=read_config(config_path) if args.config or config_path.is_file() else {}
+    # Question banks are relative to the config, independent of the caller's cwd.
+    for key in ('attribute_bank','tifa_bank'):
+        bank=config.get('evaluation',{}).get(key)
+        if bank:
+            config['evaluation'][key]=str((config_path.parent/Path(bank).expanduser()).resolve())
     report=evaluate(args,config)
     from .runtime import save_json
     save_json(Path(args.output),report)

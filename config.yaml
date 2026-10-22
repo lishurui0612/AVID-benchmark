@@ -44,7 +44,9 @@ evaluation:
   efficientnet: /path/to/existing/efficientnet_b1-c27df63c.pth
   swav: /path/to/existing/swav_800ep_pretrain.pth.tar
   qwen: /path/to/existing/Qwen3-VL-8B-Instruct
-  attribute_bank: /path/to/AVID/annotations/qwen_v3.json
+  # Bundled frozen bank for simple-stimulus attributes; relative to this config.
+  attribute_bank: avid_benchmark/vendor/vmi_metrics/simple_attribute_bank_qwen_v3.json
   tifa_mplug: /path/to/existing/mplug
   tifa_sbert: /path/to/existing/sbert
-  tifa_bank: /path/to/AVID/annotations/tifa_bank_complex.json
+  # For simple stimuli, use tifa_bank_simple.json in the same directory.
+  tifa_bank: avid_benchmark/vendor/vmi_metrics/tifa_bank_complex.json
