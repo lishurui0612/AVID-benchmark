@@ -78,6 +78,8 @@ The reader accepts the released tar shards, either directly under the dataset ro
 
 Each tar sample contains `<key>.img_name.npy` and `<key>.responses.npy`. Image names must match the supplied stimulus images and the `image` column in `used_stimuli.tsv`. English semantic references use its `translated_caption` column. Keep the released splits and vertex order intact. The held-out prediction split is named `val` in the files and manifests.
 
+An additional [simple visual-identity-disjoint v1 split](docs/SPLITS.md) provides 320 training and 80 validation stimuli with 75/20 identities and zero identity overlap. The release includes fixed manifests, per-stimulus annotations, a deterministic [generator](scripts/generate_simple_identity_disjoint_split.py), and distribution/overlap checks. Color and position remain shared by design. Baseline commands continue to use the original shard partitions; using the additional split requires repartitioning each participant's original train+val samples as described in the [split guide](docs/SPLITS.md#using-the-manifests-with-fmri-data).
+
 Copy the template and replace its placeholder paths:
 
 ```bash
