@@ -25,4 +25,4 @@ avid-evaluate = "avid_benchmark.cli:evaluate_main"
 include = ["avid_benchmark*"]
 
 [tool.setuptools.package-data]
-avid_benchmark = ["recipes/*.json", "vendor/**/*.yaml", "vendor/**/*.json", "vendor/**/*.txt", "vendor/**/LICENSE*"]
+avid_benchmark = ["recipes/*.json", "vendor/**/*.yaml", "vendor/**/*.json", "vendor/**/*.txt", "vendor/**/LICENSE*", "vendor/vmi_metrics/simple_identity_disjoint_v1_*.csv", "vendor/vmi_metrics/simple_identity_disjoint_v1_attribute_comparison.md", "vendor/vmi_metrics/simple_sub01_current_val80_manifest.csv"]

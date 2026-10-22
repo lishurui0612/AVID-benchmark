@@ -24,6 +24,10 @@ config.local.*
 # Historical internal experiment inventories; not runtime dependencies
 avid_benchmark/vendor/vmi_metrics/*.csv
 avid_benchmark/vendor/vmi_metrics/*_comparison.md
+!avid_benchmark/vendor/vmi_metrics/simple_identity_disjoint_v1_train.csv
+!avid_benchmark/vendor/vmi_metrics/simple_identity_disjoint_v1_val.csv
+!avid_benchmark/vendor/vmi_metrics/simple_identity_disjoint_v1_attribute_comparison.md
+!avid_benchmark/vendor/vmi_metrics/simple_sub01_current_val80_manifest.csv
 avid_benchmark/vendor/vmi_metrics/simple_attribute_bank_v1.json
 avid_benchmark/vendor/vmi_metrics/simple_attribute_bank_qwen_v1.json
 avid_benchmark/vendor/vmi_metrics/simple_attribute_bank_qwen_v2.json
