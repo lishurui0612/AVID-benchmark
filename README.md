@@ -93,7 +93,17 @@ cp config.yaml config.local.yaml
 
 Only the assets needed by your selected workflow have to be available. Existing data folders and weight files can be used in place; their directory names do not have to change. Model loading uses local assets with Hugging Face offline mode enabled.
 
-For attribute evaluation, use the bundled [qwen_v3 bank](avid_benchmark/vendor/vmi_metrics/simple_attribute_bank_qwen_v3.json). TIFA uses the fixed [complex](avid_benchmark/vendor/vmi_metrics/tifa_bank_complex.json) or [simple](avid_benchmark/vendor/vmi_metrics/tifa_bank_simple.json) bank. Set the corresponding configuration entries to the bank for your stimulus type.
+The templates use the bundled fixed question banks by default:
+
+| Evaluation | Configuration key | Bundled path |
+|---|---|---|
+| Simple-stimulus attributes (Qwen v3) | `evaluation.attribute_bank` in `config.yaml` | [`avid_benchmark/vendor/vmi_metrics/simple_attribute_bank_qwen_v3.json`](avid_benchmark/vendor/vmi_metrics/simple_attribute_bank_qwen_v3.json) |
+| TIFA complex (default in both templates) | `evaluation.tifa_bank` | [`avid_benchmark/vendor/vmi_metrics/tifa_bank_complex.json`](avid_benchmark/vendor/vmi_metrics/tifa_bank_complex.json) |
+| TIFA simple (select explicitly) | `evaluation.tifa_bank` | [`avid_benchmark/vendor/vmi_metrics/tifa_bank_simple.json`](avid_benchmark/vendor/vmi_metrics/tifa_bank_simple.json) |
+
+For simple-stimulus TIFA evaluation, set `evaluation.tifa_bank` to `avid_benchmark/vendor/vmi_metrics/tifa_bank_simple.json`. The bank is selected explicitly; it is not switched automatically from the prediction manifest. TIFA requires each reference caption to be present in the selected bank.
+
+In `evaluate.py` / `avid-evaluate`, relative paths for `evaluation.attribute_bank` and `evaluation.tifa_bank` are resolved against the **configuration file's directory**. Keep `config.local.yaml` beside the template to use these defaults. If you move the configuration elsewhere, adjust these paths or use absolute paths. Both keys accept custom bank paths (including `~`); custom Qwen banks must retain the frozen `qwen_v3` format and cover the requested stimuli. Explicit paths are used directly, so a missing custom file raises an error rather than falling back to a bundled bank. Data and model-weight placeholders still need to be configured for your workflow.
 
 ## Evaluation
 
