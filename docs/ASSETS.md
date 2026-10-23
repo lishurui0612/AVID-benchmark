@@ -22,12 +22,14 @@
 
 | Asset | Download |
 |---|---|
-| CLIP ViT-B/32 | https://huggingface.co/openai/clip-vit-base-patch32/tree/main |
+| CLIP ViT-L/14 (original OpenAI .pt; CLIP-I, CLIP-T, retrieval) | https://openaipublic.azureedge.net/clip/models/b8cca3fd41ae0c99ba7e8951adf17d267cdb84cd88be6f7c2e0eca1737a03836/ViT-L-14.pt |
 | SigLIP base-patch16-224 | https://huggingface.co/google/siglip-base-patch16-224/tree/7fd15f0689c79d79e38b1c2e2e2370a7bf2761ed |
 | AltCLIP | https://huggingface.co/BAAI/AltCLIP/tree/17788d7d45af0e41d0f10682fe91d655ac96435c |
 | Qwen3-VL-8B-Instruct | https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct/tree/main |
 | TIFA mPLUG COCO VQA large English (community mirror) | https://huggingface.co/diffusion-bench/mplug_visual-question-answering_coco_large_en/tree/main |
 | TIFA Sentence-BERT all-mpnet-base-v2 | https://huggingface.co/sentence-transformers/all-mpnet-base-v2/tree/e8c3b32edf5434bc2275fc9bab85f82640a19130 |
+
+For evaluation, set `evaluation.clip` to the downloaded **file** `ViT-L-14.pt`. Its SHA-256 must be `b8cca3fd41ae0c99ba7e8951adf17d267cdb84cd88be6f7c2e0eca1737a03836`; the evaluator checks it once when loading. Model names that would trigger downloads, Hugging Face directories, ViT-B/32, and other checkpoint bytes are not accepted for this paper protocol. The Hugging Face and OpenCLIP assets in the baseline section serve training/generation components; they do not select the benchmark evaluation encoder. See the [CLIP evaluation protocol](../METRICS.md#clip-evaluation-protocol) for preprocessing and precision.
 
 ## Original-provider downloads
 

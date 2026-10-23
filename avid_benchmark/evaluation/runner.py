@@ -112,14 +112,16 @@ def evaluate(args,config):
                     pair=features['inception']
                 elif name=='clip_i_2way':
                     if 'clip_i' not in features:
-                        features['clip_i']=(pool.images('clip',images,True),pool.images('clip',references,True))
+                        generated=features['clip'][0] if 'clip' in features else pool.images('clip',images)
+                        features['clip_i']=(generated,pool.images('clip',references))
                     pair=features['clip_i']
                 else:
                     if not all(captions):
                         raise ValueError('Missing reference captions for semantic metrics.')
                     encoder='siglip' if name.startswith('siglip') else 'altclip' if name.startswith('altclip') else 'clip'
                     if encoder not in features:
-                        features[encoder]=(pool.images(encoder,images),pool.texts(encoder,captions))
+                        generated=features['clip_i'][0] if encoder=='clip' and 'clip_i' in features else pool.images(encoder,images)
+                        features[encoder]=(generated,pool.texts(encoder,captions))
                     pair=features[encoder]
                 value=fn(*pair,sample_ids=ids)
             elif 'accuracy' in name or 'chance' in name:
@@ -146,6 +148,8 @@ def evaluate(args,config):
             scores[name]=_serialize(value)
         reports[f'sub-{key[0]:02d}/{key[1]}/{key[2]}']={'n':len(ids),'sample_ids':ids,'metrics':scores}
     report={'protocol':'avid-release-v1','prediction_manifest_sha256':_sha256(args.predictions),'subjects':reports,'evaluation_config':config.get('evaluation',{})}
+    if pool.protocols:
+        report['encoder_protocols']=pool.protocols
     if getattr(args,'save_answers',None):
         if not extracted_answers:
             raise ValueError('--save-answers requires an attribute metric.')

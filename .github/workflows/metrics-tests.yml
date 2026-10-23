@@ -37,7 +37,7 @@ jobs:
           python -m pip install torch==2.1.0 --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -e ".[test]"
       - name: Run core metric and evaluation CLI tests
-        run: python -m pytest tests/test_metrics.py tests/test_evaluation_cli.py tests/test_identity_disjoint_split.py -q -ra
+        run: python -m pytest tests/test_metrics.py tests/test_evaluation_cli.py tests/test_identity_disjoint_split.py tests/test_clip_evaluation.py -q -ra
 
   tifa-installation:
     name: TIFA installation (CPU)
@@ -68,4 +68,4 @@ jobs:
       - name: Check real TIFA inference imports
         run: python tests/tifa_installation_check.py
       - name: Run metric and CLI regressions with TIFA installed
-        run: python -m pytest tests/test_metrics.py tests/test_evaluation_cli.py tests/test_identity_disjoint_split.py -q -ra
+        run: python -m pytest tests/test_metrics.py tests/test_evaluation_cli.py tests/test_identity_disjoint_split.py tests/test_clip_evaluation.py -q -ra
