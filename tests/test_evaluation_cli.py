@@ -7,6 +7,72 @@ from avid_benchmark.evaluation import compute_clip_t_recall_at_1
 from avid_benchmark.evaluation.runner import evaluate
 
 
+@pytest.mark.parametrize('backend',['last_position','tiny_siglip'])
+def test_siglip_text_features_do_not_depend_on_batch_composition(monkeypatch,backend):
+    import torch
+    from avid_benchmark.evaluation.encoders import EncoderPool
+
+    lengths=[]
+    class Processor:
+        def __call__(self,text,padding,truncation,return_tensors,max_length=64):
+            # Deterministic token IDs; exercise actual batching without downloads.
+            rows=[[2+len(word)%29 for word in caption.split()]+[1] for caption in text]
+            length=max_length if padding=='max_length' else max(map(len,rows))
+            lengths.append(length)
+            return {'input_ids':torch.tensor([row[:length]+[0]*max(0,length-len(row)) for row in rows])}
+
+    if backend=='tiny_siglip':
+        pytest.importorskip('transformers')
+        from transformers import SiglipConfig,SiglipModel
+        torch.manual_seed(7)
+        config=SiglipConfig(
+            text_config=dict(vocab_size=32,hidden_size=16,intermediate_size=32,
+                             num_hidden_layers=1,num_attention_heads=2,max_position_embeddings=64),
+            vision_config=dict(hidden_size=16,intermediate_size=32,num_hidden_layers=1,
+                               num_attention_heads=2,image_size=16,patch_size=8),
+        )
+        model=SiglipModel(config).eval()
+    else:
+        class LastPositionModel:
+            def get_text_features(self,input_ids):
+                # SigLIP pools the last position; its position changes with dynamic padding.
+                return torch.stack((input_ids[:,-1].float()+1,
+                                    torch.full((len(input_ids),),float(input_ids.shape[1]))),dim=1)
+        model=LastPositionModel()
+
+    pool=EncoderPool({'device':'cpu','batch_size':2})
+    monkeypatch.setattr(pool,'hf',lambda name:(model,Processor()))
+    short='there is a knife'
+    long='at the bottom there is a yellow three by three dot array'
+    alone=pool.texts('siglip',[short])[0]
+    mixed=pool.texts('siglip',[short,long])[0]
+    np.testing.assert_allclose(alone,mixed,rtol=1e-5,atol=1e-6)
+    all_texts=[short,long,'a cat '*50]
+    batched=pool.texts('siglip',all_texts)
+    pool.batch_size=1
+    single=pool.texts('siglip',all_texts)
+    np.testing.assert_allclose(batched,single,rtol=1e-5,atol=1e-6)
+    assert set(lengths)=={64}
+
+
+@pytest.mark.parametrize('name',['clip','altclip'])
+def test_other_text_encoders_keep_dynamic_padding(monkeypatch,name):
+    import torch
+    from avid_benchmark.evaluation.encoders import EncoderPool
+
+    calls=[]
+    def processor(**kwargs):
+        calls.append(kwargs)
+        return {'input_ids':torch.ones((1,4),dtype=torch.long)}
+    class Model:
+        def get_text_features(self,**inputs):
+            return inputs['input_ids'].float()
+    pool=EncoderPool({'device':'cpu'})
+    monkeypatch.setattr(pool,'hf',lambda encoder:(Model(),processor))
+    pool.texts(name,['a cat'])
+    assert calls==[dict(text=['a cat'],padding=True,truncation=True,return_tensors='pt')]
+
+
 def test_cli_npz_equals_direct_function(tmp_path):
     features=np.eye(4)
     path=tmp_path/'features.npz'

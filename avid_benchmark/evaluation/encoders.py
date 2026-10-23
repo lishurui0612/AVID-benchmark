@@ -53,9 +53,11 @@ class EncoderPool:
         import torch
         model,processor=self.hf(name)
         features=[]
+        # SigLIP was trained with fixed padding and pools the last text position.
+        text_options={'padding':'max_length','max_length':64} if name=='siglip' else {'padding':True}
         with torch.inference_mode():
             for start in range(0,len(texts),self.batch_size):
-                inputs=processor(text=texts[start:start+self.batch_size],padding=True,truncation=True,return_tensors='pt')
+                inputs=processor(text=texts[start:start+self.batch_size],truncation=True,return_tensors='pt',**text_options)
                 inputs={key:value.to(self.device) for key,value in inputs.items()}
                 features.append(model.get_text_features(**inputs).float().cpu().numpy())
         return np.concatenate(features)
