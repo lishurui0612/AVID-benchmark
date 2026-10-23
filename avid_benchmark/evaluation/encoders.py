@@ -1,8 +1,12 @@
 """Local-only reusable feature/VQA backends. Scoring functions never load them."""
 from pathlib import Path
+import hashlib
 import json
 import os
 import numpy as np
+
+
+CLIP_L14_SHA256='b8cca3fd41ae0c99ba7e8951adf17d267cdb84cd88be6f7c2e0eca1737a03836'
 
 
 class EncoderPool:
@@ -10,7 +14,11 @@ class EncoderPool:
         self.config=config
         self.device=config.get('device','cuda')
         self.batch_size=int(config.get('batch_size',8))
+        self.clip_batch_size=int(config.get('clip_batch_size',160))
+        if self.clip_batch_size<1:
+            raise ValueError('evaluation.clip_batch_size must be positive.')
         self.models={}
+        self.protocols={}
         os.environ['HF_HUB_OFFLINE']='1'
         os.environ['TRANSFORMERS_OFFLINE']='1'
 
@@ -21,36 +29,80 @@ class EncoderPool:
         return str(path)
 
     def hf(self,name):
+        if name=='clip':
+            return self._clip()
         import torch
-        from transformers import AutoModel,AutoProcessor,CLIPModel,SiglipModel
+        from transformers import AutoModel,AutoProcessor,SiglipModel
         if name not in self.models:
             path=self.path(name)
-            cls={'clip':CLIPModel,'siglip':SiglipModel}.get(name,AutoModel)
+            cls={'siglip':SiglipModel}.get(name,AutoModel)
             self.models[name]=(cls.from_pretrained(path,local_files_only=True).to(self.device).eval(),AutoProcessor.from_pretrained(path,local_files_only=True))
         return self.models[name]
 
-    def images(self,name,images,image_metric=False):
+    def _clip(self):
+        if 'clip' not in self.models:
+            path=Path(self.path('clip'))
+            if not path.is_file():
+                raise ValueError('evaluation.clip must be the original OpenAI ViT-L-14.pt file, not a Hugging Face directory.')
+            digest=hashlib.sha256()
+            with path.open('rb') as handle:
+                for block in iter(lambda:handle.read(1024*1024),b''):
+                    digest.update(block)
+            if digest.hexdigest()!=CLIP_L14_SHA256:
+                raise ValueError('evaluation.clip does not match the paper\'s OpenAI ViT-L/14 checkpoint (SHA-256 mismatch).')
+            import clip
+            # clip.load preserves native CUDA mixed precision and uses FP32 on CPU.
+            model,_=clip.load(str(path),device=self.device,jit=False)
+            self.models['clip']=(model.eval(),clip.tokenize)
+            self.protocols['clip']={
+                'implementation':'openai_clip_native','model':'ViT-L/14',
+                'checkpoint_sha256':digest.hexdigest(),'dtype':str(model.dtype),
+                'device':str(self.device),'batch_size':self.clip_batch_size,
+                'resize':224,'antialias':False,'text_context_length':77,
+                'text_image_preprocessing':'raw_tensor_bilinear224_clip_normalize',
+            }
+        return self.models['clip']
+
+    def _clip_images(self,images):
         import torch
         import torch.nn.functional as F
+        model,_=self._clip()
+        features=[]
+        with torch.inference_mode():
+            mean=torch.tensor([.48145466,.4578275,.40821073],device=self.device)[None,:,None,None]
+            std=torch.tensor([.26862954,.26130258,.27577711],device=self.device)[None,:,None,None]
+            for start in range(0,len(images),self.clip_batch_size):
+                pixels=[]
+                for im in images[start:start+self.clip_batch_size]:
+                    x=torch.from_numpy(np.array(im,dtype=np.float32)).permute(2,0,1)[None].to(self.device)/255
+                    pixels.append(F.interpolate(x,size=(224,224),mode='bilinear',align_corners=False,antialias=False))
+                features.append(model.encode_image((torch.cat(pixels)-mean)/std).float().cpu().numpy())
+        return np.concatenate(features)
+
+    def images(self,name,images,image_metric=False):
+        if name=='clip':
+            # Both image identification and text alignment use this exact path.
+            return self._clip_images(images)
+        import torch
         model,processor=self.hf(name)
         features=[]
         with torch.inference_mode():
             for start in range(0,len(images),self.batch_size):
                 chunk=images[start:start+self.batch_size]
-                if image_metric:
-                    from torchvision.transforms.functional import pil_to_tensor
-                    tensors=[F.interpolate(pil_to_tensor(im).float().unsqueeze(0)/255,size=(224,224),mode='bilinear',align_corners=False) for im in chunk]
-                    pixels=torch.cat(tensors).to(self.device)
-                    mean=torch.tensor([.48145466,.4578275,.40821073],device=self.device)[None,:,None,None]
-                    std=torch.tensor([.26862954,.26130258,.27577711],device=self.device)[None,:,None,None]
-                    pixels=(pixels-mean)/std
-                else:
-                    pixels=processor(images=chunk,return_tensors='pt')['pixel_values'].to(self.device)
+                pixels=processor(images=chunk,return_tensors='pt')['pixel_values'].to(self.device)
                 features.append(model.get_image_features(pixel_values=pixels).float().cpu().numpy())
         return np.concatenate(features)
 
     def texts(self,name,texts):
         import torch
+        if name=='clip':
+            model,tokenize=self._clip()
+            features=[]
+            with torch.inference_mode():
+                for start in range(0,len(texts),self.clip_batch_size):
+                    tokens=tokenize(texts[start:start+self.clip_batch_size],context_length=77,truncate=True).to(self.device)
+                    features.append(model.encode_text(tokens).float().cpu().numpy())
+            return np.concatenate(features)
         model,processor=self.hf(name)
         features=[]
         # SigLIP was trained with fixed padding and pools the last text position.

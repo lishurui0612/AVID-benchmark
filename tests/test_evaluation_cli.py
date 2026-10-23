@@ -55,7 +55,7 @@ def test_siglip_text_features_do_not_depend_on_batch_composition(monkeypatch,bac
     assert set(lengths)=={64}
 
 
-@pytest.mark.parametrize('name',['clip','altclip'])
+@pytest.mark.parametrize('name',['altclip'])
 def test_other_text_encoders_keep_dynamic_padding(monkeypatch,name):
     import torch
     from avid_benchmark.evaluation.encoders import EncoderPool

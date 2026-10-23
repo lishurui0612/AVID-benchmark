@@ -36,7 +36,9 @@ model_overrides:
 evaluation:
   device: cuda
   batch_size: 8
-  clip: /path/to/existing/clip-vit-base-patch32
+  clip_batch_size: 160
+  # Paper evaluation: original OpenAI ViT-L/14 checkpoint (not an HF folder).
+  clip: /path/to/existing/ViT-L-14.pt
   siglip: /path/to/existing/siglip
   altclip: /path/to/existing/altclip
   inception: /path/to/existing/inception_v3_google-0cc3c7bd.pth

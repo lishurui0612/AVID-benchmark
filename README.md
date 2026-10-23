@@ -168,6 +168,8 @@ caption_result = compute_token_f1(
 
 Every function returns a `MetricResult` containing the aggregate score, per-sample values, IDs, denominator, and protocol. Importing the scoring functions does not load baseline models or encoders.
 
+CLIP-I, CLIP-T, and CLIP retrieval evaluation use the same **OpenAI ViT-L/14** checkpoint and image features across all four baselines. Set `evaluation.clip` to the original local `ViT-L-14.pt` file and keep `evaluation.clip_batch_size: 160` for the paper setting. The evaluator checks the checkpoint hash and records the actual extraction settings. Hugging Face ViT-B/32 directories from older templates must be replaced; training/generation CLIP assets are separate. See the [CLIP evaluation protocol](METRICS.md#clip-evaluation-protocol) and [download link](docs/ASSETS.md#evaluation-assets).
+
 Precomputed arrays can also be evaluated with `--inputs features.npz`; NPZ keys must match the selected function's arguments. Saved Qwen answers can be rescored without Qwen inference:
 
 ```bash
