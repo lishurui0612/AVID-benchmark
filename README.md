@@ -233,12 +233,14 @@ For development, run `python -m pytest tests -q`. The optional two-process CPU g
 If you use AVID in your research, please cite both our paper and the dataset:
 
 ```bibtex
-@inproceedings{avid2026,
-  title = {{AVID}: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding},
-  author = {AUTHOR_LIST},
-  booktitle = {Advances in Neural Information Processing Systems},
-  year = {2026},
-  url = {PAPER_URL}
+@misc{shen2026avid5tfmridataset,
+      title={AVID: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding}, 
+      author={Shiqi Shen and Shurui Li and Xilin Zhang and Yuanning Li},
+      year={2026},
+      eprint={2611.02593},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2611.02593}, 
 }
 
 @misc{avid_dataset2026,
