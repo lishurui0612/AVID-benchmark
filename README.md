@@ -63,7 +63,9 @@ Use the `https://download.pytorch.org/whl/cpu` index instead for CPU inference. 
 
 ## Data and configuration
 
-The complete AVID dataset is openly available on [ScienceDB](https://doi.org/10.57760/sciencedb.33666). Download the dataset and point the configuration to its local location. Data and pretrained weights are distributed separately from this repository. Download links are collected in [Asset downloads](docs/ASSETS.md).
+The complete AVID dataset is openly available on [ScienceDB](https://doi.org/10.57760/sciencedb.33666
+        
+        ). Download the dataset and point the configuration to its local location. Data and pretrained weights are distributed separately from this repository. Download links are collected in [Asset downloads](docs/ASSETS.md).
 
 The reader accepts the released tar shards, either directly under the dataset root or in subject subdirectories:
 
@@ -233,14 +235,13 @@ For development, run `python -m pytest tests -q`. The optional two-process CPU g
 If you use AVID in your research, please cite both our paper and the dataset:
 
 ```bibtex
-@misc{shen2026avid5tfmridataset,
-      title={AVID: A 5T fMRI Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding}, 
-      author={Shiqi Shen and Shurui Li and Xilin Zhang and Yuanning Li},
-      year={2026},
-      eprint={2611.02593},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2611.02593}, 
+@inproceedings{
+    shen2026avid,
+    title={{AVID}: A 5T f{MRI} Dataset for Benchmarking Auditory-induced Visual Mental Imagery Decoding},
+    author={Shiqi Shen and Shurui Li and Xilin Zhang and Yuanning Li},
+    booktitle={The Fortieth Annual Conference on Neural Information Processing Systems Evaluations and Datasets Track},
+    year={2026},
+    url={https://openreview.net/forum?id=IIKVWwmtSM}
 }
 
 @misc{avid_dataset2026,
